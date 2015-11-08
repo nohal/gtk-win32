@@ -107,7 +107,7 @@ param (
 	$PatchesRootDirectory = "$BuildDirectory\github\gtk-win32",
 
 	[string]
-	$VSInstallPath = 'C:\Program Files (x86)\Microsoft Visual Studio 14.0',
+	$VSInstallPath = 'C:\Program Files (x86)\Microsoft Visual Studio 12.0',
 
 	[string]
 	$CMakePath = 'C:\Program Files (x86)\CMake\bin',
@@ -437,7 +437,7 @@ $items['gettext-runtime'].BuildScript = {
 	$originalEnvironment = Swap-Environment $vcvarsEnvironment
 
 	$env:PATH += ";$CMakePath"
-	Exec cmake -G 'NMake Makefiles' "-DCMAKE_INSTALL_PREFIX=`"$packageDestination`"" -DCMAKE_BUILD_TYPE=Release "-DICONV_INCLUDE_DIR=`"$packageDestination\..\..\..\gtk\$platform\include`"" "-DICONV_LIBRARIES=`"$packageDestination\..\..\..\gtk\$platform\lib\iconv.lib`""
+	Exec cmake -G 'NMake Makefiles' "-DCMAKE_EXE_LINKER_FLAGS=/SUBSYSTEM:CONSOLE,5.01" "-DCMAKE_SHARED_LINKER_FLAGS=/SUBSYSTEM:CONSOLE,5.01" "-DCMAKE_MODULE_LINKER_FLAGS=/SUBSYSTEM:CONSOLE,5.01" "-DCMAKE_INSTALL_PREFIX=`"$packageDestination`"" -DCMAKE_BUILD_TYPE=Release "-DICONV_INCLUDE_DIR=`"$packageDestination\..\..\..\gtk\$platform\include`"" "-DICONV_LIBRARIES=`"$packageDestination\..\..\..\gtk\$platform\lib\iconv.lib`""
 	Exec nmake clean
 	Exec nmake
 	Exec nmake install
@@ -807,7 +807,7 @@ $items['win-iconv'].BuildScript = {
 
 	$env:PATH += ";$CMakePath"
 
-	Exec cmake -G 'NMake Makefiles' "-DCMAKE_INSTALL_PREFIX=`"$packageDestination`"" -DCMAKE_BUILD_TYPE=Release
+	Exec cmake -G 'NMake Makefiles' "-DCMAKE_EXE_LINKER_FLAGS=/SUBSYSTEM:CONSOLE,5.01" "-DCMAKE_SHARED_LINKER_FLAGS=/SUBSYSTEM:CONSOLE,5.01" "-DCMAKE_MODULE_LINKER_FLAGS=/SUBSYSTEM:CONSOLE,5.01" "-DCMAKE_INSTALL_PREFIX=`"$packageDestination`"" -DCMAKE_BUILD_TYPE=Release
 	Exec nmake clean
 	Exec nmake
 	Exec nmake install
@@ -880,7 +880,7 @@ if (-not $(Test-Path $tar)) {
 # Verify VS exists at the indicated location, and that it supports the required target
 switch ($Configuration) {
 	'x86' {
-		$vcvarsBat = "$VSInstallPath\VC\bin\vcvars32.bat"
+		$vcvarsBat = "$VSInstallPath\VC\bin\vcvars32-v120_xp.bat"
 	}
 
 	'x64' {
@@ -1057,7 +1057,7 @@ $items.GetEnumerator() | %{
 		Push-Location $item.BuildDirectory
 		Get-ChildItem -Recurse *.vcxproj | %{
 			$contents = Get-Content $_.FullName
-			$contents = $contents -replace '<PlatformToolset>v120</PlatformToolset>', '<PlatformToolset>v140</PlatformToolset>' -replace '<GenerateDebugInformation>true</GenerateDebugInformation>', '<GenerateDebugInformation>Debug</GenerateDebugInformation>'
+			$contents = $contents -replace '<PlatformToolset>v120</PlatformToolset>', '<PlatformToolset>v120_xp</PlatformToolset>' -replace '<PlatformToolset>v140</PlatformToolset>', '<PlatformToolset>v120_xp</PlatformToolset>'
 			$contents | Out-File -LiteralPath $_.FullName -Encoding utf8
 		}
 		Pop-Location
