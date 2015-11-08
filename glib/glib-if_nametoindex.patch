@@ -9,8 +9,8 @@ diff -urpN glib-2.42.0.orig/config.h.win32 glib-2.42.0/config.h.win32
 -#ifndef _WIN32_WINNT
 -#define _WIN32_WINNT 0x0501
 -#endif
-+/* Target the Windows Vista API */
-+#define _WIN32_WINNT 0x0600
++/* Target the Windows XP API */
++#define _WIN32_WINNT 0x0501
 
  #if _WIN32_WINNT >= 0x0600
  /* if_indextoname() and if_nametoindex() are available on Windows Vista/Server
