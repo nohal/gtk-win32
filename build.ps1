@@ -1,7 +1,7 @@
 <#
 
 .SYNOPSIS
-This is a build script to build GTK+ 2 and openssl.
+This is a build script to build GTK+ 2.
 
 
 .DESCRIPTION
@@ -115,7 +115,7 @@ param (
 	[string]
 	$PerlDirectory = "$BuildDirectory\perl-5.20",
 
-	[string[]][ValidateSet('atk', 'cairo', 'enchant', 'fontconfig', 'freetype', 'gdk-pixbuf', 'gettext-runtime', 'glib', 'gtk', 'harfbuzz', 'libffi', 'libpng', 'libxml2', 'openssl', 'pango', 'pixman', 'win-iconv', 'zlib')]
+	[string[]][ValidateSet('atk', 'cairo', 'enchant', 'fontconfig', 'freetype', 'gdk-pixbuf', 'gettext-runtime', 'glib', 'gtk', 'harfbuzz', 'libffi', 'libpng', 'libxml2', 'pango', 'pixman', 'win-iconv', 'zlib')]
 	$OnlyBuild = @()
 )
 
@@ -191,11 +191,6 @@ $items = @{
 	'libxml2' = @{
 		'ArchiveUrl' = 'http://dl.hexchat.net/gtk-win32/src/libxml2-2.9.2.tar.gz'
 		'Dependencies' = @('win-iconv')
-	};
-
-	'openssl' = @{
-		'ArchiveUrl' = 'http://dl.hexchat.net/gtk-win32/src/openssl-1.0.2d.tar.gz'
-		'Dependencies' = @()
 	};
 
 	'pango' = @{
@@ -658,76 +653,6 @@ $items['libxml2'].BuildScript = {
 
 	New-Item -Type Directory $packageDestination\share\doc\libxml2
 	Copy-Item .\COPYING $packageDestination\share\doc\libxml2
-
-	Package $packageDestination
-}
-
-$items['openssl'].BuildScript = {
-	$packageDestination = "$PWD-$filenameArch"
-	Remove-Item -Recurse $packageDestination -ErrorAction Ignore
-
-	$originalEnvironment = Swap-Environment $vcvarsEnvironment
-
-	$env:PATH += ";$PerlDirectory\$platform\bin;$Msys2Directory\usr\bin"
-
-	switch ($filenameArch) {
-		'x86' {
-			Exec perl Configure VC-WIN32 no-ssl2 no-ssl3 no-comp --openssldir=./
-			Exec ms\do_nasm
-		}
-
-		'x64' {
-			Exec perl Configure VC-WIN64A no-ssl2 no-ssl3 no-comp --openssldir=./
-			Exec ms\do_win64a
-		}
-	}
-
-	# nmake returns error code 2 because it fails to find build outputs to delete
-	try { Exec nmake -f ms\ntdll.mak vclean } catch { }
-
-	Exec nmake -f ms\ntdll.mak
-
-	Exec nmake -f ms\ntdll.mak test
-
-	Exec perl mk-ca-bundle.pl -n cert.pem
-	Move-Item .\include .\include-orig
-
-	Exec nmake -f ms\ntdll.mak install
-
-	[void] (Swap-Environment $originalEnvironment)
-
-	New-Item -Type Directory $packageDestination
-
-	Move-Item .\bin $packageDestination
-	Copy-Item `
-		.\out32dll\libeay32.pdb, `
-		.\out32dll\openssl.pdb, `
-		.\out32dll\ssleay32.pdb `
-		$packageDestination\bin
-	Move-Item .\cert.pem $packageDestination\bin
-
-	Move-Item .\include $packageDestination
-	Move-Item .\include-orig .\include
-
-	Move-Item .\lib $packageDestination
-	Copy-Item `
-		.\out32dll\4758cca.pdb, `
-		.\out32dll\aep.pdb, `
-		.\out32dll\atalla.pdb, `
-		.\out32dll\capi.pdb, `
-		.\out32dll\chil.pdb, `
-		.\out32dll\cswift.pdb, `
-		.\out32dll\gmp.pdb, `
-		.\out32dll\gost.pdb, `
-		.\out32dll\nuron.pdb, `
-		.\out32dll\padlock.pdb, `
-		.\out32dll\sureware.pdb, `
-		.\out32dll\ubsec.pdb `
-		$packageDestination\lib\engines
-
-	New-Item -Type Directory $packageDestination\share\doc\openssl
-	Move-Item .\openssl.cnf $packageDestination\share\openssl.cnf.example
-	Copy-Item .\LICENSE $packageDestination\share\doc\openssl\COPYING
 
 	Package $packageDestination
 }
