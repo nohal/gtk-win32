@@ -1,5 +1,13 @@
-Here you can download a GTK+ 2 bundle (and a few additional libraries) built with Visual Studio 2015. HexChat for Windows is built using this bundle.
+Here you can download a GTK+ 2 bundle retaining the comaptibility with Windows XP, built with Visual Studio 2013.
 
+It is nothing more than a patched version of the excellent work done by the HexChat team and living at https://github.com/hexchat/gtk-win32
+
+Interesting reading:
+* http://blogs.msdn.com/b/vcblog/archive/2012/10/08/windows-xp-targeting-with-c-in-visual-studio-2012.aspx
+
+## Notes
+* For the VS solutions, pretty much all that has to be done is changing the platform toolchain to v120_xp
+* Only Win32 is addressed, in case you need a 64 bit build, you will at least need to create an equivalent of vcvars32-v120_xp.bat (Based on vcvars64 from your VisualStudio installation)
 
 ## GTK+ Bundle
 

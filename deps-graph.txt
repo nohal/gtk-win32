@@ -22,6 +22,4 @@
 [Cairo]->[Pango]
 [HarfBuzz]->[Pango]
 [libpng]->[Pixman]
-[Enchant]->[HexChat]
-[GTK+]->[HexChat]
-[OpenSSL]->[HexChat]
+[GTK+]->[Whatever application]

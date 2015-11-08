@@ -741,7 +741,7 @@ if (-not $(Test-Path $tar)) {
 # Verify VS exists at the indicated location, and that it supports the required target
 switch ($Configuration) {
 	'x86' {
-		$vcvarsBat = "$VSInstallPath\VC\bin\vcvars32-v120_xp.bat"
+		$vcvarsBat = ".\vcvars32-v120_xp.bat"
 	}
 
 	'x64' {
